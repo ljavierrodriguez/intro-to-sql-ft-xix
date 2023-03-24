@@ -1,4 +1,4 @@
--- Active: 1679577619104@@127.0.0.1@3306
+-- Active: 1679661136225@@127.0.0.1@3306@intro_to_sql
 
 -- DDL => Data Definition Lenguage
 
@@ -71,6 +71,14 @@ VALUES (
         'jane.doe@gmail.com'
     );
 
+INSERT INTO
+    users (name, lastname, email)
+VALUES (
+        'Luis',
+        'Rodriguez',
+        'lrodriguez@4geeks.co'
+    );
+
 -- UPDATE table_name SET field1=value1, field2=value2, ...fieldn=valuen WHERE condition;
 
 UPDATE users SET address='av new york 5' WHERE id = 1;
@@ -81,4 +89,57 @@ UPDATE users SET address='illinois, 333' WHERE id = 3;
 
 DELETE FROM users WHERE id = 3;
 
-DELETE FROM users WHERE id in (1,2,3,4,5) 
+DELETE FROM users WHERE id in (1, 2, 3, 4, 5);
+
+INSERT INTO
+    todos (task, date, users_id)
+VALUES 
+('Buy Bread', '2023-03-08', 1), 
+('Prueba', '2023-03-23', 1), 
+('Go to supermarket', '2023-03-23', 3), 
+('Prueba', '2023-03-23', 3);
+
+INSERT INTO todos (task, users_id) VALUES ('Go to the scholl', 3);
+
+SELECT * FROM todos WHERE users_id = 3;
+
+-- Usuarios con Tareas
+SELECT u.*, t.* FROM users AS u
+JOIN todos AS t ON u.id = t.users_id
+WHERE t.date BETWEEN '2023-03-08 00:00:00' AND '2023-03-23 23:59:59';
+
+-- Usuarios con o sin tareas
+SELECT * FROM users AS u 
+LEFT JOIN todos AS t ON u.id = t.users_id
+WHERE u.id IN (1, 2, 3, 4);
+
+SELECT * FROM users AS u
+RIGHT JOIN todos AS t ON u.id = t.users_id;
+
+
+
+SELECT * FROM users AS u 
+LEFT JOIN todos AS t ON u.id = t.users_id
+WHERE u.id IN (1, 2, 3, 4)
+
+UNION 
+
+SELECT * FROM users AS u
+RIGHT JOIN todos AS t ON u.id = t.users_id;
+
+
+SELECT * FROM users AS u 
+LEFT OUTER JOIN todos AS t ON u.id = t.users_id
+WHERE u.id IN (1, 2, 3, 4);
+
+SELECT * FROM users AS u 
+RIGHT OUTER JOIN todos AS t ON u.id = t.users_id
+WHERE u.id IN (1, 2, 3, 4) ORDER BY t.date desc;
+
+SELECT count(1) as total, t.users_id, u.name FROM todos AS t
+LEFT JOIN users AS u ON t.users_id = u.id
+GROUP BY t.users_id;
+
+SELECT CONCAT(u.name, ' ', u.lastname) AS fullname, count(t.users_id) AS todos FROM users AS u
+LEFT JOIN todos AS t ON u.id = t.users_id
+GROUP BY u.id;
